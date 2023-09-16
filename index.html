@@ -1,22 +1,96 @@
+<!-- 支持翻页，图片，文字的小说阅读网页 -->
 <!DOCTYPE html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"  />
-    <style type="text/css"> p{margin:0}</style>
-  <body>
-    <div id="header" style="background-color:#ccf1f3;" align="center">
-      <title>看小说的网站</title>
-      <h1 style="margin-bottom:0;">以下是小说内容</h1>
-    </div>
-    <div id="header" style="background-color:#ccf1f3;">
-      <p>&nbsp《反应方程式》 2023.9.15</p>
-    </div>
-    <img src="https://i.imgs.ovh/2023/09/15/L2So.jpeg" width="1000">
-    <img src="https://i.imgs.ovh/2023/09/15/LrHD.jpeg" width="1000">
-    <p>终</p>
-    <div id="footer" style="background-color:#41a5ee;clear:both;text-align:center;">
-      网页制作&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cht &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2023.9.15
-    </div>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小说阅读网站</title>
+  <style>
+    body {
+      font-size: 16px;
+    }
+
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .chapter-content img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .controls {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="content" id="chapterContent">
+    <!-- 初始章节内容 -->
+   
+  </div>
+
+  <div class="controls">
+    <button onclick="prevChapter()">上一页</button>
+    <button onclick="nextChapter()">下一页</button>
+  </div>
+
+  <div id="footer" style="background-color:#41a5ee;clear:both;text-align:center;">
+    <p>网页制作&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cht&nbsp;&&nbsp;chatgpt</p>
+  </div>
+
+  <script>
+    // 章节内容数据，可以替换成实际小说章节内容
+    const chapters = [
+      {
+        title: '反应方程式',
+        content: '<p>第一页</p><img src="https://i.imgs.ovh/2023/09/15/L2So.jpeg" alt="图片1"><p>第一页 终</p>'
+      },
+      {
+        title: '反应方程式',
+        content: '<p>第二页</p><img src="https://i.imgs.ovh/2023/09/15/LrHD.jpeg" alt="图片1"><p>第二页 终</p>'
+      },
+      {
+        title: '反应方程式',
+        content: '<p>第三页</p><p>哪有第三页？？？</p>'
+      }
+      // 可以继续添加更多章节
+    ];
+
+    let currentChapterIndex = 0;
+    const chapterContentElement = document.getElementById('chapterContent');
+
+    function displayChapter(index) {
+      const chapter = chapters[index];
+      if (chapter) {
+        chapterContentElement.innerHTML = `<div class="chapter-content"><h2>${chapter.title}</h2>${chapter.content}</div>`;
+      } else {
+        chapterContentElement.innerHTML = '<div class="chapter-content"><p>没有更多章节了。</p></div>';
+      }
+    }
+
+    function prevChapter() {
+      if (currentChapterIndex > 0) {
+        currentChapterIndex--;
+        displayChapter(currentChapterIndex);
+      }
+    }
+
+    function nextChapter() {
+      if (currentChapterIndex < chapters.length - 1) {
+        currentChapterIndex++;
+        displayChapter(currentChapterIndex);
+      }
+    }
+
+    // 显示初始章节
+    displayChapter(currentChapterIndex);
+  </script>
+</body>
+
 </html>
