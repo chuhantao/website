@@ -1,6 +1,6 @@
 <!-- 支持翻页，图片，文字的小说阅读网页 -->
-<!-- 2023.9.16-v1.2 -->
-<!-- 优化图床访问、增加注释 -->
+<!-- 2023.9.16-v1.3 -->
+<!-- 增加图床切换 -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,13 +35,15 @@
   <!-- 内容 -->
   <div class="content" id="chapterContent">
   </div>
-  <!-- 翻页 -->
+  <!-- 翻页与换源 -->
   <div class="controls">
     <button onclick="prevChapter()">上一页</button>
     <button onclick="nextChapter()">下一页</button>
     &nbsp;&nbsp;
     <input type="number" id="chapterInput" placeholder="输入页码">
     <button onclick="jumpChapter()">跳转页码</button>
+    <button onclick="nextChapterGroup()">换源</button>
+    <p id="currentGroup"></p>
   </div>
   <!-- 署名 -->
   <div id="footer" style="clear:both;text-align:center;">
@@ -49,36 +51,66 @@
   </div>
 
   <script>
-    // 章节内容数据，可以替换成实际小说章节内容
-    const chapters = [
+    const chapterGroups = [
       {
+        groupName: '通道1-github图床-可能无法访问',
+        chapters: [
+        {
         title: '目录',
         content: '<p>这是目录</p><p>p2--反应方程式-hjc</p><p>p4--加成反应-qcy</p>'
       },
       {
         title: '反应方程式-hjc',
-        content: '<p>第一页</p><img src="https://jsd.cdn.zzko.cn/gh/chuhantao/picx-images-hosting@master/20231003/IMG_20230915_152955.6wgdzc9ny8s0.jpg" alt="图片1"><p>p2</p>'
+        content: '<p>第一页</p><img src="https://github.com/chuhantao/picx-images-hosting/raw/master/20231003/IMG_20230915_152955.6wgdzc9ny8s0.jpg" alt="图片1"><p>p2</p>'
       },
       {
         title: '反应方程式-hjc',
-        content: '<p>第二页</p><img src="https://jsd.cdn.zzko.cn/gh/chuhantao/picx-images-hosting@master/20231003/IMG_20230915_153001.1exbg4gndlcw.jpg" alt="图片1"><p>p3</p>'
+        content: '<p>第二页</p><img src="https://github.com/chuhantao/picx-images-hosting/raw/master/20231003/IMG_20230915_153001.1exbg4gndlcw.jpg" alt="图片1"><p>p3</p>'
       },
       {
         title: '加成反应-qcy',
-        content: '<p>第一页</p><img src="https://jsd.cdn.zzko.cn/gh/chuhantao/picx-images-hosting@master/20231003/IMG_20230916_211544.70b80iugpp80.jpg" alt="图片1"><p>p4</p>'
+        content: '<p>第一页</p><img src="https://github.com/chuhantao/picx-images-hosting/raw/master/20231003/IMG_20230916_211544.70b80iugpp80.jpg" alt="图片1"><p>p4</p>'
       },
       {
         title: '尾页',
         content: '<p>没有啦！！！</p><p>p5</p>'
       }
-      // 可以继续添加更多章节
+        ]
+      },
+      {
+        groupName: '通道2-imgloc图床',
+        chapters: [
+        {
+        title: '目录',
+        content: '<p>这是目录</p><p>p2--反应方程式-hjc</p><p>p4--加成反应-qcy</p>'
+      },
+      {
+        title: '反应方程式-hjc',
+        content: '<p>第一页</p><img src="https://i.imgs.ovh/2023/09/15/L2So.jpeg" alt="图片1"><p>p2</p>'
+      },
+      {
+        title: '反应方程式-hjc',
+        content: '<p>第二页</p><img src="https://i.imgs.ovh/2023/09/15/LrHD.jpegg" alt="图片1"><p>p3</p>'
+      },
+      {
+        title: '加成反应-qcy',
+        content: '<p>第一页</p><img src="https://i.imgs.ovh/2023/09/16/FPjA.jpeg" alt="图片1"><p>p4</p>'
+      },
+      {
+        title: '尾页',
+        content: '<p>没有啦！！！</p><p>p5</p>'
+      }
+        ]
+      }
     ];
 
+    let currentGroupIndex = 0;
     let currentChapterIndex = 0;
     const chapterContentElement = document.getElementById('chapterContent');
+    const currentGroupElement = document.getElementById('currentGroup');
 
-    function displayChapter(index) {
-      const chapter = chapters[index];
+    function displayChapter(groupIndex, chapterIndex) {
+      const chapter = chapterGroups[groupIndex].chapters[chapterIndex];
       if (chapter) {
         chapterContentElement.innerHTML = `<div class="chapter-content"><h2>${chapter.title}</h2>${chapter.content}</div>`;
       } else {
@@ -89,29 +121,42 @@
     function prevChapter() {
       if (currentChapterIndex > 0) {
         currentChapterIndex--;
-        displayChapter(currentChapterIndex);
+        displayChapter(currentGroupIndex, currentChapterIndex);
       }
     }
 
     function nextChapter() {
-      if (currentChapterIndex < chapters.length - 1) {
+      if (currentChapterIndex < chapterGroups[currentGroupIndex].chapters.length - 1) {
         currentChapterIndex++;
-        displayChapter(currentChapterIndex);
+        displayChapter(currentGroupIndex, currentChapterIndex);
       }
     }
 
     function jumpChapter() {
       const chapterInput = document.getElementById('chapterInput').value;
-      if (chapterInput >= 1 && chapterInput <= chapters.length) {
+      if (chapterInput >= 1 && chapterInput <= chapterGroups[currentGroupIndex].chapters.length) {
         currentChapterIndex = chapterInput - 1;
-        displayChapter(currentChapterIndex);
+        displayChapter(currentGroupIndex, currentChapterIndex);
       } else {
         alert('请输入有效的页码！');
       }
     }
-   
+
+    function nextChapterGroup() {
+      currentGroupIndex = (currentGroupIndex + 1) % chapterGroups.length;
+      currentChapterIndex = 0;
+      displayChapter(currentGroupIndex, currentChapterIndex);
+      displayCurrentGroup();
+    }
+
+    function displayCurrentGroup() {
+      const currentGroupName = chapterGroups[currentGroupIndex].groupName;
+      currentGroupElement.textContent = `当前源：${currentGroupName}`;
+    }
+
     // 显示初始章节
-    displayChapter(currentChapterIndex);
+    displayChapter(currentGroupIndex, currentChapterIndex);
+    displayCurrentGroup();
   </script>
 </body>
 
